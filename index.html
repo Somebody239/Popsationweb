@@ -763,44 +763,86 @@
             spinning = true;
             spinResult.textContent = '';
 
-            // Calculate the segment angle and the free popcorn segment position
+            // Calculate the segment angle
             const segAngle = (2 * Math.PI) / segments.length;
             const freePopcornSegment = 0; // Index of the free popcorn segment
             
-            // Calculate a random final position that avoids the free popcorn segment
-            let finalAngle;
-            do {
-                // Generate a random angle between 0 and 2π
-                finalAngle = Math.random() * 2 * Math.PI;
-                // Calculate which segment this would land on
-                let landingSegment = Math.floor(((3 * Math.PI / 2) - finalAngle) / segAngle) % segments.length;
-                if (landingSegment < 0) landingSegment += segments.length;
-                // If it would land on free popcorn, try again
-            } while (Math.floor(((3 * Math.PI / 2) - finalAngle) / segAngle) % segments.length === freePopcornSegment);
+            // Calculate a final angle that guarantees avoiding the free popcorn segment
+            // We'll ensure it lands in segments 2-7 (indices 1-6)
+            const safeSegments = [1, 2, 3, 4, 5, 6]; // Excluding segment 0 (free popcorn) and 7
+            const targetSegment = safeSegments[Math.floor(Math.random() * safeSegments.length)];
+            
+            // Calculate the center angle of the target segment
+            const targetAngle = (3 * Math.PI / 2) - (targetSegment * segAngle);
+            
+            // Add some random offset within the safe segment to make it look natural
+            const randomOffset = (Math.random() * 0.8 + 0.1) * segAngle; // 10%-90% of segment width
+            const finalAngle = targetAngle - randomOffset;
 
-            // Calculate total rotation (base rotations + final angle)
+            // Calculate total rotation (minimum 8 full rotations plus final position)
             let spinAngle = (Math.random() * 6 + 8) * 2 * Math.PI + finalAngle;
             let start = angle;
             let duration = 4200;
             let startTime = null;
+            let slowRotationSpeed = 0.02; // Speed for continued rotation when on free popcorn
+            let isInSlowRotation = false; // Flag to track if we're in slow rotation mode
+            
+            function getCurrentSegment() {
+                let pointerAngle = (3 * Math.PI / 2 - angle) % (2 * Math.PI);
+                if (pointerAngle < 0) pointerAngle += 2 * Math.PI;
+                return Math.floor(pointerAngle / segAngle);
+            }
             
             function animateWheel(ts) {
                 if (!startTime) startTime = ts;
                 let elapsed = ts - startTime;
                 let progress = Math.min(elapsed / duration, 1);
-                // Ease out
-                let eased = 1 - Math.pow(1 - progress, 3);
-                angle = start + spinAngle * (1 - Math.pow(1 - eased, 3));
-                drawWheel();
-                if (progress < 1) {
-                    requestAnimationFrame(animateWheel);
+                
+                if (!isInSlowRotation) {
+                    // Normal spin animation
+                    let eased = 1 - Math.pow(1 - progress, 3);
+                    angle = start + spinAngle * (1 - Math.pow(1 - eased, 3));
+                    
+                    // Check if main spin is complete or nearly complete
+                    if (progress > 0.99) {
+                        let currentSegment = getCurrentSegment();
+                        
+                        // If we're on or near the free popcorn segment, switch to slow rotation
+                        if (currentSegment === freePopcornSegment) {
+                            isInSlowRotation = true;
+                            requestAnimationFrame(animateWheel);
+                            return;
+                        }
+                        
+                        // If we're on a safe segment, stop
+                        if (progress >= 1) {
+                            spinning = false;
+                            canSpin = false;
+                            updateLastSpinDate();
+                            showResult();
+                            return;
+                        }
+                    }
                 } else {
-                    spinning = false;
-                    canSpin = false;
-                    updateLastSpinDate();
-                    showResult();
+                    // Slow rotation mode
+                    angle += slowRotationSpeed;
+                    let currentSegment = getCurrentSegment();
+                    
+                    // Stop only when we're safely away from the free popcorn segment
+                    if (currentSegment !== freePopcornSegment && 
+                        Math.abs(currentSegment - freePopcornSegment) > 1) { // Ensure we're not adjacent
+                        spinning = false;
+                        canSpin = false;
+                        updateLastSpinDate();
+                        showResult();
+                        return;
+                    }
                 }
+                
+                drawWheel();
+                requestAnimationFrame(animateWheel);
             }
+            
             requestAnimationFrame(animateWheel);
         }
 
