@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popsation - Gourmet Popcorn Stand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fef9c3 0%, #fecaca 100%);
+            min-height: 100vh;
+            color: #4b5563;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        
+        .popcorn-bg {
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjQyLDE0MiwwLjEpIi8+PHBhdGggZD0iTTAgMjBMMjAgMjBNMjAgMEwwIDIwIiBzdHJva2U9InJnYmEoMjM5LDY4LDY4LDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+        
+        .popcorn-icon {
+            color: #f59e0b;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .ticket-badge {
+            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .selected {
+            border: 2px solid #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+        }
+        
+        .section-divider {
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+            margin: 2rem auto;
+        }
+
+        /* Animation classes */
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .slide-out {
+            animation: slideOut 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Instagram Follow Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: popupSlideIn 0.3s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup-content h3 {
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+
+        .popup-content p {
+            margin-bottom: 1.5rem;
+            color: #4b5563;
+        }
+
+        .popup-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .popup-btn-primary {
+            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            color: white;
+        }
+
+        .popup-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .popup-btn-secondary {
+            background: white;
+            color: #ef4444;
+            border: 2px solid #ef4444;
+        }
+
+        .popup-btn-secondary:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+<body class="popcorn-bg">
+    <!-- Instagram Follow Popup -->
+    <div id="instagramPopup" class="popup-overlay">
+        <div class="popup-content flex flex-col md:flex-row md:items-start md:justify-between relative">
+            <div class="flex-1 text-left">
+                <h3 class="text-2xl font-bold mb-2">Follow Us to Spin! 🎉</h3>
+                <p class="mb-4 text-gray-700">Follow us on Instagram to try your luck on the wheel! You might win some amazing prizes!</p>
+                <div class="flex flex-row gap-2 mt-2">
+                    <a href="https://www.instagram.com/br.popsation" target="_blank" class="popup-btn popup-btn-primary" id="instagramBtn">
+                        <i class="fab fa-instagram mr-2"></i>Follow on Instagram
+                    </a>
+                    <button id="followedBtn" class="popup-btn popup-btn-secondary" style="display: none;">
+                        I Followed!
+                    </button>
+                </div>
+            </div>
+            <button id="closePopupBtn" aria-label="Close" class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-red-500 focus:outline-none bg-transparent border-none cursor-pointer">&times;</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-card fixed w-full z-50 py-4 px-6 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-popcorn popcorn-icon text-3xl mr-2"></i>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">POPSATION</h1>
+        </div>
+        <div class="flex space-x-4">
+            <a href="#about" class="hover:text-red-500 transition">About</a>
+            <a href="#menu" class="hover:text-red-500 transition">Menu</a>
+            <a href="https://www.instagram.com/br.popsation" target="_blank" class="hover:text-red-500 transition">
+                <i class="fab fa-instagram"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="about" class="min-h-screen flex items-center justify-center px-4 pt-20 pb-10">
+        <div class="glass-card max-w-4xl w-full p-8 md:p-12 mx-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">Popcorn Perfection</h2>
+                    <p class="text-lg mb-6">At Popsation, we believe popcorn should be an experience. Our gourmet popcorn is freshly popped using premium ingredients and crafted with care to deliver that perfect crunch.</p>
+                    <div class="bg-yellow-50 border-l-4 border-red-500 p-4 mb-6">
+                        <p class="font-semibold text-red-600">How to Order:</p>
+                        <p>1 ticket = $1. Choose your base popcorn and add delicious toppings to create your perfect snack!</p>
+                    </div>
+                    <div class="flex space-x-4">
+                    <a href="#menu" class="btn-primary px-6 py-3 rounded-full font-semibold inline-block">View Menu</a>
+                        <a href="https://hcdsb.schoolcashonline.com/Fee/Details/94377/6/False/True" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-full font-semibold inline-block bg-white text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-300">Buy Tickets</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="w-64 h-64 bg-yellow-100 rounded-full absolute -top-4 -left-4 opacity-30"></div>
+                        <img src="Upscale Media Enhanced Image (1).png" 
+                             alt="Gourmet Popcorn" 
+                             class="relative z-10 rounded-2xl w-full max-w-xs transform rotate-3 hover:rotate-0 transition duration-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Spinner Section -->
+    <section id="spinner" class="flex flex-col items-center justify-center py-16">
+        <div class="glass-card p-8 md:p-12 max-w-6xl w-full">
+            <div class="flex flex-col md:flex-row items-start justify-between gap-8">
+                <div class="w-full md:w-1/2 flex flex-col items-start">
+                    <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">Spin the Wheel!</h2>
+                    <p class="mb-8 text-gray-700">Try your luck for a chance to win free popcorn or other fun prizes! One spin per visit. Good luck!</p>
+                    <div class="relative flex flex-col items-center self-center mt-4">
+                        <div class="absolute left-1/2 top-2 transform -translate-x-1/2 -translate-y-full z-20">
+                            <div style="width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 30px solid #ef4444; filter: drop-shadow(0 4px 8px #ef4444aa); border-radius: 0 0 10px 10px;"></div>
+                        </div>
+                        <canvas id="wheelCanvas" width="400" height="400"></canvas>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-1/2 flex flex-col items-center md:items-start justify-center space-y-6 md:pl-8">
+                    <div class="glass-card p-6 w-full bg-white bg-opacity-40 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-red-500">How to Play:</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                Follow us on Instagram
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                Click the Spin button
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                Win amazing prizes!
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div id="spinResult" class="text-xl font-semibold text-center md:text-left w-full min-h-[3rem] flex items-center"></div>
+                    
+                    <button id="spinBtn" class="btn-primary px-12 py-4 rounded-full font-bold text-lg shadow-lg hover:scale-105 transition-transform w-full md:w-auto">
+                        Spin to Win!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-16 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-card p-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">Popcorn Menu</h2>
+                <p class="text-center text-lg mb-10 text-gray-700">Explore our gourmet popcorn menu! Start with a base and add your favorite toppings. Each item is priced in tickets as shown below. Mix and match for your perfect treat!</p>
+
+                <!-- Bases -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center"><i class="fas fa-popcorn mr-2 text-yellow-500"></i> Bases</h3>
+                    <p class="mb-4 text-gray-600">Choose from our fresh, crunchy popcorn bases to start your creation.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-3xl"><i class="fas fa-butter popcorn-icon"></i></span>
+                            <div>
+                                <h4 class="font-semibold">Buttered Popcorn</h4>
+                                <p class="text-sm text-gray-600">Classic buttery goodness, freshly popped and golden.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">1</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-3xl"><i class="fas fa-popcorn popcorn-icon"></i></span>
+                            <div>
+                                <h4 class="font-semibold">Plain Popcorn</h4>
+                                <p class="text-sm text-gray-600">Simple, light, and delicious—perfect for any topping.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Toppings -->
+                <div>
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center"><i class="fas fa-star mr-2 text-yellow-500"></i> Basic Toppings <span class="ml-2 text-sm font-normal">+1 ticket each</span></h3>
+                    <p class="mb-4 text-gray-600">Add a sweet twist to your popcorn with our basic toppings.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-2xl"><i class="fas fa-candy-cane text-yellow-600"></i></span>
+                                <div>
+                                    <h4 class="font-semibold">Caramel Drizzle</h4>
+                                <p class="text-sm text-gray-600">Sweet golden caramel, drizzled for a perfect finish.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">1</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-2xl"><i class="fas fa-ice-cream" style="color: #7B3F00;"></i></span>
+                                <div>
+                                    <h4 class="font-semibold">Chocolate Drizzle</h4>
+                                <p class="text-sm text-gray-600">Rich chocolate sauce for a decadent treat.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">1</span>
+                    </div>
+                </div>
+                
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center"><i class="fas fa-crown mr-2 text-yellow-500"></i> Premium Toppings <span class="ml-2 text-sm font-normal">+2 tickets each</span></h3>
+                    <p class="mb-4 text-gray-600">Upgrade your snack with our premium toppings for an extra special treat.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-2xl"><i class="fas fa-cookie text-gray-800"></i></span>
+                                <div>
+                                    <h4 class="font-semibold">Oreo Crumbles</h4>
+                                <p class="text-sm text-gray-600">Crunchy Oreo cookie pieces for chocolate lovers.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">2</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white bg-opacity-60 flex items-center">
+                            <span class="mr-4 text-2xl"><i class="fas fa-candy text-red-500"></i></span>
+                                <div>
+                                <h4 class="font-semibold">M&amp;M's</h4>
+                                <p class="text-sm text-gray-600">Colorful chocolate candies for a fun, sweet crunch.</p>
+                            </div>
+                            <span class="ml-auto ticket-badge">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 bg-gradient-to-r from-red-500 to-yellow-500 text-white">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <div class="flex items-center">
+                    <i class="fas fa-popcorn text-2xl mr-2"></i>
+                    <h2 class="text-2xl font-bold">POPSATION</h2>
+                </div>
+                <p class="mt-2 text-sm">Popcorn perfection in every bite</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#about" class="hover:underline">About</a>
+                <a href="#menu" class="hover:underline">Menu</a>
+                <a href="https://www.instagram.com/br.popsation" target="_blank" class="hover:underline">
+                    <i class="fab fa-instagram"></i> Follow Us
+                </a>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-sm">
+            <p>&copy; 2025 Popsation. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedItems = {
+            base: null,
+            toppings: [],
+            toppingType: null
+        };
+        
+        function selectOption(element, type) {
+            // Remove selected class from all options in this category
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.popcorn-option, .topping-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Update selected items
+            if (element.classList.contains('popcorn-option')) {
+                selectedItems.base = type;
+                // Show toppings section when base is selected
+                const toppingsSection = document.getElementById('toppings-section');
+                toppingsSection.classList.remove('hidden');
+                toppingsSection.classList.add('slide-in');
+                // Hide order summary until topping is selected
+                document.getElementById('order-summary-section').classList.add('hidden');
+            } else {
+                // For toppings, we only allow one selection at a time
+                selectedItems.toppings = [type]; // Replace the entire array with the new selection
+                
+                // Show order summary when a topping is selected
+                const orderSummary = document.getElementById('order-summary-section');
+                orderSummary.classList.remove('hidden');
+                orderSummary.classList.add('fade-in');
+            }
+            
+            updateOrderSummary();
+        }
+
+        function selectToppingType(element, type) {
+            // Remove selected class from all topping type options
+            const options = document.querySelectorAll('.topping-type-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Update selected topping type
+            selectedItems.toppingType = type;
+            
+            // Hide both topping sections
+            const basicToppings = document.getElementById('basic-toppings');
+            const premiumToppings = document.getElementById('premium-toppings');
+            
+            // Show selected topping section with animation
+            if (type === 'basic') {
+                basicToppings.classList.remove('hidden');
+                basicToppings.classList.add('slide-in');
+                premiumToppings.classList.add('hidden');
+            } else {
+                premiumToppings.classList.remove('hidden');
+                premiumToppings.classList.add('slide-in');
+                basicToppings.classList.add('hidden');
+            }
+            
+            // Clear any previously selected toppings
+            selectedItems.toppings = [];
+            
+            // Remove selected class from all topping options
+            document.querySelectorAll('.topping-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            updateOrderSummary();
+        }
+        
+        function updateOrderSummary() {
+            const orderSummary = document.getElementById('order-summary');
+            const totalTickets = document.getElementById('total-tickets');
+            const totalPrice = document.getElementById('total-price');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            let summaryHTML = '';
+            let tickets = 0;
+            let itemCount = 0;
+            
+            // Base selection
+            if (selectedItems.base) {
+                const baseName = selectedItems.base === 'butter' ? 'Buttered Popcorn' : 'Plain Popcorn';
+                summaryHTML += `<p>• ${baseName} <span class="float-right">1 ticket</span></p>`;
+                tickets += 1;
+                itemCount += 1;
+            }
+            
+            // Toppings
+            selectedItems.toppings.forEach(topping => {
+                let toppingName = '';
+                let toppingTickets = selectedItems.toppingType === 'premium' ? 2 : 1;
+                
+                switch(topping) {
+                    case 'caramel':
+                        toppingName = 'Caramel Drizzle';
+                        break;
+                    case 'chocolate':
+                        toppingName = 'Chocolate Drizzle';
+                        break;
+                    case 'oreo':
+                        toppingName = 'Oreo Crumbles';
+                        break;
+                    case 'mnm':
+                        toppingName = 'M&M\'s';
+                        break;
+                }
+                
+                if (toppingName) {
+                summaryHTML += `<p>• ${toppingName} <span class="float-right">${toppingTickets} ticket${toppingTickets > 1 ? 's' : ''}</span></p>`;
+                tickets += toppingTickets;
+                itemCount += 1;
+                }
+            });
+            
+            if (summaryHTML === '') {
+                summaryHTML = '<p class="text-gray-600">Select items to build your order</p>';
+            }
+            
+            orderSummary.innerHTML = summaryHTML;
+            totalTickets.textContent = tickets;
+            totalPrice.textContent = `$${tickets}`;
+            
+            // Update checkout button
+            if (itemCount > 0) {
+                checkoutBtn.textContent = `Checkout (${itemCount} item${itemCount > 1 ? 's' : ''})`;
+                checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                checkoutBtn.disabled = false;
+            } else {
+                checkoutBtn.textContent = 'Checkout (0 items)';
+                checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                checkoutBtn.disabled = true;
+            }
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Instagram button animation
+        const instaBtn = document.querySelector('a[href="https://www.instagram.com/br.popsation"]');
+        instaBtn.addEventListener('mouseover', () => {
+            instaBtn.querySelector('i').classList.add('fa-bounce');
+        });
+        instaBtn.addEventListener('mouseout', () => {
+            instaBtn.querySelector('i').classList.remove('fa-bounce');
+        });
+
+        // Spinner Wheel Logic
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        // High-DPI (Retina) support
+        const dpr = window.devicePixelRatio || 1;
+        wheelCanvas.width = 400 * dpr;
+        wheelCanvas.height = 400 * dpr;
+        wheelCanvas.style.width = '400px';
+        wheelCanvas.style.height = '400px';
+        const ctx = wheelCanvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const spinBtn = document.getElementById('spinBtn');
+        const spinResult = document.getElementById('spinResult');
+        const segments = [
+            { label: 'Free\nPopcorn + Topping', color: '#f59e0b', icon: '🍿✨' },
+            { label: 'Try\nAgain', color: '#ef4444', icon: '🔄' },
+            { label: 'No Prize', color: '#f59e0b', icon: '😐' },
+            { label: 'Better\nLuck Next Time', color: '#ef4444', icon: '😢' },
+            { label: 'Try\nAgain', color: '#f59e0b', icon: '🔄' },
+            { label: 'No Prize', color: '#ef4444', icon: '😐' },
+            { label: 'Better\nLuck Next Time', color: '#f59e0b', icon: '😢' },
+            { label: 'Try\nAgain', color: '#ef4444', icon: '🔄' }
+        ];
+        let spinning = false;
+        let angle = 0;
+        let canSpin = true;
+
+        // Initialize popup and spin tracking
+        const popup = document.getElementById('instagramPopup');
+        const followedBtn = document.getElementById('followedBtn');
+        const instagramBtn = document.getElementById('instagramBtn');
+        
+        // Check if user has already spun today
+        function canSpinToday() {
+            const lastSpinDate = localStorage.getItem('lastSpinDate');
+            if (!lastSpinDate) return true;
+            
+            const today = new Date().toDateString();
+            return lastSpinDate !== today;
+        }
+        
+        // Update last spin date
+        function updateLastSpinDate() {
+            const today = new Date().toDateString();
+            localStorage.setItem('lastSpinDate', today);
+        }
+
+        // Update spin status message
+        function updateSpinStatus() {
+            if (canSpinToday()) {
+                spinResult.innerHTML = '<span class="text-green-600">🎲 1 spin remaining today!</span>';
+            } else {
+                spinResult.innerHTML = '<span class="text-yellow-600">🕒 You can spin again tomorrow!</span>';
+            }
+        }
+        
+        // Show Instagram follow popup
+        function showInstagramPopup() {
+            popup.style.display = 'flex';
+            followedBtn.style.display = 'none'; // Reset button visibility
+        }
+        
+        // Handle Instagram button click
+        instagramBtn.addEventListener('click', () => {
+            // Show the "I Followed" button after a short delay
+            setTimeout(() => {
+                followedBtn.style.display = 'inline-block';
+                followedBtn.classList.add('fade-in');
+            }, 500);
+        });
+
+        // Hide Instagram follow popup
+        function hideInstagramPopup() {
+            popup.style.display = 'none';
+        }
+        
+        // Handle "I Followed" button click
+        followedBtn.addEventListener('click', () => {
+            hideInstagramPopup();
+            spinWheel();
+        });
+
+        function drawWheel() {
+            const radius = 175;
+            const centerX = wheelCanvas.width / (2 * dpr);
+            const centerY = wheelCanvas.height / (2 * dpr);
+            const segAngle = (2 * Math.PI) / segments.length;
+            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+            // Draw spinner segments (background) first
+            for (let i = 0; i < segments.length; i++) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, i * segAngle + angle, (i + 1) * segAngle + angle);
+                ctx.closePath();
+                ctx.fillStyle = segments[i].color;
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.restore();
+            }
+            // Draw icons and text on top of segments
+            for (let i = 0; i < segments.length; i++) {
+                // Calculate the center angle for this segment
+                const segStartAngle = i * segAngle + angle;
+                const segEndAngle = (i + 1) * segAngle + angle;
+                const segCenterAngle = (segStartAngle + segEndAngle) / 2;
+                // Position for text (move out from center)
+                const textRadius = radius * 0.72; // Center of the arc
+                // Calculate text position
+                const textX = centerX + textRadius * Math.cos(segCenterAngle);
+                const textY = centerY + textRadius * Math.sin(segCenterAngle);
+                // Draw label, start with larger font and wrap as needed
+                ctx.save();
+                ctx.fillStyle = '#4b5563';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.translate(textX, textY);
+                ctx.rotate(segCenterAngle + Math.PI / 2);
+                let label = segments[i].label.replace(/\n/g, ' ');
+                let maxWidth = 2 * Math.tan(segAngle / 2) * textRadius * 0.85; // width of arc at text radius
+                let fontSize = 15;
+                let words = label.split(' ');
+                let lines = [];
+                let currentLine = '';
+                ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
+                for (let w = 0; w < words.length; w++) {
+                    let testLine = currentLine ? currentLine + ' ' + words[w] : words[w];
+                    if (ctx.measureText(testLine).width <= maxWidth) {
+                        currentLine = testLine;
+                    } else {
+                        if (currentLine) lines.push(currentLine);
+                        currentLine = words[w];
+                    }
+                }
+                if (currentLine) lines.push(currentLine);
+                // If any word is too long, shrink font size until all lines fit
+                let fits = false;
+                while (!fits && fontSize > 11) {
+                    fits = true;
+                    ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
+                    for (let l = 0; l < lines.length; l++) {
+                        if (ctx.measureText(lines[l]).width > maxWidth) {
+                            fits = false;
+                            break;
+                        }
+                    }
+                    if (!fits) {
+                        fontSize--;
+                        ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
+                    }
+                }
+                // Vertically center the block of text
+                let totalHeight = lines.length * fontSize + (lines.length - 1) * 2;
+                let startY = -totalHeight / 2 + fontSize / 2;
+                for (let l = 0; l < lines.length; l++) {
+                    ctx.fillText(lines[l], 0, startY + l * (fontSize + 2));
+                }
+                ctx.restore();
+                // Now draw the icon just below the text block, along the same radius
+                const iconGap = 8;
+                const iconOffset = totalHeight / 2 + iconGap + 12;
+                const iconRadius = textRadius;
+                const iconX = centerX + iconRadius * Math.cos(segCenterAngle);
+                const iconY = centerY + iconRadius * Math.sin(segCenterAngle);
+                ctx.save();
+                ctx.font = 'bold 24px Poppins, sans-serif';
+                ctx.fillStyle = '#4b5563';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.translate(iconX, iconY);
+                ctx.rotate(segCenterAngle + Math.PI / 2);
+                ctx.fillText(segments[i].icon, 0, iconOffset);
+                ctx.restore();
+            }
+            // Draw center circle
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 48, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.restore();
+        }
+        drawWheel();
+
+        function spinWheel() {
+            if (!canSpin || spinning) return;
+            
+            // Check if user can spin today
+            if (!canSpinToday()) {
+                spinResult.innerHTML = '<span class="text-yellow-600">🕒 You can spin again tomorrow!</span>';
+                return;
+            }
+            
+            spinning = true;
+            spinResult.textContent = '';
+
+            // Calculate the segment angle and the free popcorn segment position
+            const segAngle = (2 * Math.PI) / segments.length;
+            const freePopcornSegment = 0; // Index of the free popcorn segment
+            
+            // Calculate a random final position that avoids the free popcorn segment
+            let finalAngle;
+            do {
+                // Generate a random angle between 0 and 2π
+                finalAngle = Math.random() * 2 * Math.PI;
+                // Calculate which segment this would land on
+                let landingSegment = Math.floor(((3 * Math.PI / 2) - finalAngle) / segAngle) % segments.length;
+                if (landingSegment < 0) landingSegment += segments.length;
+                // If it would land on free popcorn, try again
+            } while (Math.floor(((3 * Math.PI / 2) - finalAngle) / segAngle) % segments.length === freePopcornSegment);
+
+            // Calculate total rotation (base rotations + final angle)
+            let spinAngle = (Math.random() * 6 + 8) * 2 * Math.PI + finalAngle;
+            let start = angle;
+            let duration = 4200;
+            let startTime = null;
+            
+            function animateWheel(ts) {
+                if (!startTime) startTime = ts;
+                let elapsed = ts - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                // Ease out
+                let eased = 1 - Math.pow(1 - progress, 3);
+                angle = start + spinAngle * (1 - Math.pow(1 - eased, 3));
+                drawWheel();
+                if (progress < 1) {
+                    requestAnimationFrame(animateWheel);
+                } else {
+                    spinning = false;
+                    canSpin = false;
+                    updateLastSpinDate();
+                    showResult();
+                }
+            }
+            requestAnimationFrame(animateWheel);
+        }
+
+        function showResult() {
+            // Find the segment at the pointer
+            let segAngle = (2 * Math.PI) / segments.length;
+            let pointerAngle = (3 * Math.PI / 2 - angle) % (2 * Math.PI);
+            if (pointerAngle < 0) pointerAngle += 2 * Math.PI;
+            let idx = Math.floor(pointerAngle / segAngle);
+            let result = segments[idx].label;
+
+            switch(result) {
+                case 'Free\nPopcorn + Topping':
+                    spinResult.innerHTML = '<span class="text-green-600">🎉 Congrats! You won <b>Free Popcorn + Topping!</b> 🎉</span>';
+                    confetti();
+                    break;
+                case 'Try\nAgain':
+                    spinResult.innerHTML = '<span class="text-yellow-600">🔄 <b>Try Again</b> next time!</span>';
+                    break;
+                case 'No Prize':
+                    spinResult.innerHTML = '<span class="text-gray-600">😐 <b>No Prize</b> this time. Better luck next time!</span>';
+                    break;
+                case 'Better\nLuck Next Time':
+                    spinResult.innerHTML = '<span class="text-gray-600">😢 <b>Better Luck Next Time!</b> Keep trying!</span>';
+                    break;
+                default:
+                    spinResult.innerHTML = '<span class="text-gray-600">No luck this time. Try again next visit!</span>';
+            }
+        }
+
+        function confetti() {
+            // Simple confetti effect
+            const colors = ['#f59e0b', '#ef4444', '#fde68a', '#fef9c3', '#3b82f6'];
+            for (let i = 0; i < 40; i++) {
+                let conf = document.createElement('div');
+                conf.style.position = 'fixed';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = '-30px';
+                conf.style.width = '12px';
+                conf.style.height = '12px';
+                conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.borderRadius = '50%';
+                conf.style.opacity = 0.8;
+                conf.style.zIndex = 9999;
+                conf.style.transition = 'top 2.2s cubic-bezier(.23,1.01,.32,1), opacity 2.2s';
+                document.body.appendChild(conf);
+                setTimeout(() => {
+                    conf.style.top = '90vh';
+                    conf.style.opacity = 0;
+                }, 10);
+                setTimeout(() => {
+                    conf.remove();
+                }, 2300);
+            }
+        }
+
+        // Initialize spin status message when page loads
+        updateSpinStatus();
+
+        // Update spin button click handler
+        spinBtn.addEventListener('click', () => {
+            if (!canSpinToday()) {
+                spinResult.innerHTML = '<span class="text-yellow-600">🕒 You can spin again tomorrow!</span>';
+                return;
+            }
+            showInstagramPopup();
+        });
+
+        // Add close button logic for popup
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        closePopupBtn.addEventListener('click', hideInstagramPopup);
+    </script>
+</body>
+</html>
